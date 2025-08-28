@@ -1,15 +1,23 @@
 let isPinnedTab = false;
 
+function syncPinnedFlagIntoPageWorld() {
+  try {
+    chrome.runtime.sendMessage({
+      type: "ppt_sync_is_pinned",
+      value: Boolean(isPinnedTab),
+    });
+  } catch (_) {}
+}
+
 function requestInitialPinState() {
   try {
     chrome.runtime.sendMessage({ type: "getPinState" }, (response) => {
       if (response && typeof response.pinned === "boolean") {
         isPinnedTab = response.pinned;
+        syncPinnedFlagIntoPageWorld();
       }
     });
-  } catch (_) {
-    // ignore
-  }
+  } catch (_) {}
 }
 
 requestInitialPinState();
@@ -17,6 +25,7 @@ requestInitialPinState();
 chrome.runtime.onMessage.addListener((message) => {
   if (message && message.type === "pinState") {
     isPinnedTab = Boolean(message.pinned);
+    syncPinnedFlagIntoPageWorld();
   }
 });
 
@@ -37,7 +46,6 @@ function findAnchorFromEvent(event) {
 function isHashOnlyNavigation(url) {
   try {
     const target = new URL(url, location.href);
-    // Same page hash-only navigation
     return (
       target.origin === location.origin &&
       target.pathname === location.pathname &&
@@ -76,9 +84,19 @@ document.addEventListener(
     try {
       const url = new URL(href, location.href).href;
       chrome.runtime.sendMessage({ type: "openUrl", url, active: true });
-    } catch (_) {
-      // ignore
-    }
+    } catch (_) {}
   },
   { capture: true, passive: false }
 );
+
+window.addEventListener("ppt-open-url", (event) => {
+  try {
+    if (!isPinnedTab) return;
+    const detail = event && event.detail;
+    const href =
+      detail && detail.url ? new URL(detail.url, location.href).href : null;
+    if (!href) return;
+    if (isHashOnlyNavigation(href)) return;
+    chrome.runtime.sendMessage({ type: "openUrl", url: href, active: true });
+  } catch (_) {}
+});

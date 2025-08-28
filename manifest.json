@@ -3,7 +3,8 @@
   "name": "Persistent Pinned Tabs",
   "version": "0.1.0",
   "description": "Keeps pinned tabs on their original page. Any link clicked on a pinned tab now opens in a new tab.",
-  "permissions": ["tabs"],
+  "permissions": ["tabs", "webNavigation", "scripting"],
+  "host_permissions": ["<all_urls>"],
   "background": {
     "service_worker": "background.js",
     "type": "module"
@@ -11,7 +12,7 @@
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
-      "js": ["content.js"],
+      "js": ["spa_overrides.js", "content.js"],
       "run_at": "document_start"
     }
   ],
