@@ -1,0 +1,21 @@
+{
+  "manifest_version": 3,
+  "name": "Persistent Pinned Tabs",
+  "version": "0.1.0",
+  "description": "Keeps pinned tabs on their original page. Any link clicked on a pinned tab now opens in a new tab.",
+  "permissions": ["tabs"],
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "run_at": "document_start"
+    }
+  ],
+  "action": {
+    "default_title": "Persistent Pinned Tabs"
+  }
+}
