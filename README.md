@@ -2,6 +2,8 @@
 
 Keeps pinned tabs truly persistent: links and SPA navigations open in a new tab, pinned tabs auto-restore if closed, and typing a new address opens next to the pinned tab.
 
+[![Chrome Web Store Extension Link](https://developer.chrome.com/static/docs/webstore/branding/image/iNEddTyWiMfLSwFD6qGq.png)](https://chromewebstore.google.com/detail/persistent-pinned-tabs/lakajjeealkdolbihkkjgmcgcplgabna)
+
 ## Features
 
 - **Preserve pinned tab**: Keeps the original page in a pinned tab.
